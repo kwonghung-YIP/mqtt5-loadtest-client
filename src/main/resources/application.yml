@@ -137,6 +137,19 @@ spring:
   config:
     activate:
       on-profile:
+      - local-k8s-hivemq
+    
+mqtt:
+#  client-id: springboot_paho_${random.value}
+  broker-url: tcp://192.168.142.71:1883
+  username: user1
+  password: hm93bqCj6xR562U
+  
+---
+spring:
+  config:
+    activate:
+      on-profile:
       - local-solace
     
 mqtt:
