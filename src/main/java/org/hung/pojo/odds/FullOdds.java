@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,15 +19,16 @@ public class FullOdds {
 	private CombinationOdds[] cmb;
 
 	@Data
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	public static class CombinationOdds {
 		
 		private String cmbStr;
 		private String cmbSt;
 		private int scrOrd;
-		private boolean hf;
-		private double wP;
+		private Boolean hf;
+		//private double wP;
 		private String odds;
-		private int oDrp;
+		private Integer oDrp;
 
 	}	
 }

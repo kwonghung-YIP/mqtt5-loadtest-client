@@ -1,5 +1,6 @@
 package org.hung;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -7,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.IntStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
@@ -40,21 +44,24 @@ public class BroadcastDoubleOdds {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	@Value("${dbl-odds.topic:public/odds/dbl}") 
-	private String dblOddsTopic;
+	@Value("${dbl-odds.topic:public/push/odds/dbl-raw}") 
+	private String dblOddsRawTopic;
+
+	@Value("${dbl-odds.topic:public/push/odds/dbl-zip}") 
+	private String dblOddsZipTopic;
 	
 	@Value("file:/c:/projects/mqtt-client/dbl-odds-14x14.json")
 	private Resource jsonFile;
 	
-	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:300000}")
-	public void broadcastDoubleOdds() {
+	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:1000}")
+	public void broadcastDoubleOddsRaw() {
 		
 		//OddsInfo oddsInfo = readOddsInfoFromFile();
-		OddsInfo oddsInfo = genf1xf2DblOdds(24,24);
+		OddsInfo oddsInfo = genf1xf2DblOdds(1,34);
 		
 		MqttProperties props = new MqttProperties();
 		props.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
-		props.setMessageExpiryInterval(60*60l);
+		props.setMessageExpiryInterval(60*2l);
 			
 		MqttMessage msg = new MqttMessage();
 		msg.setRetained(true);
@@ -67,7 +74,7 @@ public class BroadcastDoubleOdds {
 			log.error("", e);
 		}
 		
-		final String topic = dblOddsTopic;
+		final String topic = dblOddsRawTopic;
 		
 		try {
 			IMqttToken token = client.publish(topic, msg);
@@ -75,7 +82,39 @@ public class BroadcastDoubleOdds {
 		} catch (MqttException e) {
 			log.error("fail to publish message",e);
 		}	
-	
+	}
+
+	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:1000}")
+	public void broadcastDoubleOddsZip() {
+		
+		//OddsInfo oddsInfo = readOddsInfoFromFile();
+		OddsInfo oddsInfo = genf1xf2DblOdds(1,34);
+		
+		MqttProperties props = new MqttProperties();
+		props.setContentType("application/gzip");
+		props.setMessageExpiryInterval(60*2l);
+			
+		MqttMessage msg = new MqttMessage();
+		msg.setRetained(true);
+		msg.setQos(1);
+		msg.setProperties(props);
+		
+		try (ByteArrayOutputStream byteOut = new ByteArrayOutputStream()) {
+			GZIPOutputStream gzipOut = new GZIPOutputStream(byteOut);
+			objectMapper.writeValue(gzipOut,oddsInfo);
+			msg.setPayload(byteOut.toByteArray());
+		} catch (IOException e) {
+			log.error("", e);
+		}
+		
+		final String topic = dblOddsZipTopic;
+		
+		try {
+			IMqttToken token = client.publish(topic, msg);
+			token.waitForCompletion();
+		} catch (MqttException e) {
+			log.error("fail to publish message",e);
+		}	
 	}
 	
 	private OddsInfo readOddsInfoFromFile() {
@@ -89,20 +128,35 @@ public class BroadcastDoubleOdds {
 	}
 	
 	private OddsInfo genf1xf2DblOdds(int f1,int f2) {
+		
+		//Random rand = new Random();
+		//IntStream intStream = rand.ints(1,999);
+		//intStream.iterator().ne
+		
 		OddsInfo oddsInfo = new OddsInfo();
 		FullOdds fullOdds = new FullOdds();
 		
-		
 		CombinationOdds[] odds = new CombinationOdds[f1*f2];
 		int n=0;
+		int noOfHf = 0;
+		int noOfODrp = 0;
 		for (int i=0;i<f1;i++) {
 			for (int j=0;j<f2;j++) {
+				long randOdds = Math.round(Math.random()*999);
 				odds[n] = new CombinationOdds();
-				odds[n].setCmbStr(String.format("%02d/%02d", f1, f2));
+				odds[n].setCmbStr(String.format("%02d/%02d", i+1, j+1));
 				odds[n].setScrOrd(n+1);
 				odds[n].setCmbSt("Defined");
-				odds[n].setWP(99999.9);
-				odds[n].setOdds("999");
+				//odds[n].setWP(99999.9);
+				odds[n].setOdds(String.valueOf(randOdds));
+				if (noOfHf <= 0) {
+					odds[n].setHf(true);
+					noOfHf++;
+				}
+				if (noOfODrp <= 10) {
+					odds[n].setODrp(30);
+					noOfODrp++;
+				}
 				n++;
 			}
 		}
