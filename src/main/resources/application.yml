@@ -157,3 +157,16 @@ mqtt:
   broker-url: tcp://localhost:1883
   username: admin
   password: admin
+ 
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - my-solace-cloud-trial
+    
+mqtt:
+#  client-id: springboot_paho_${random.value}
+  broker-url: wss://mrnzmkh0ufgnb.messaging.solace.cloud:8443
+  username: solace-cloud-client
+  password: e6r6a8ufj56v9dimfp6tgdectt

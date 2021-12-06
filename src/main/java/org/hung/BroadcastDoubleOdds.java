@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,11 +54,14 @@ public class BroadcastDoubleOdds {
 	@Value("file:/c:/projects/mqtt-client/dbl-odds-14x14.json")
 	private Resource jsonFile;
 	
+	private long countraw = 1;
+	private long countzip = 1;
+	
 	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:1000}")
 	public void broadcastDoubleOddsRaw() {
 		
 		//OddsInfo oddsInfo = readOddsInfoFromFile();
-		OddsInfo oddsInfo = genf1xf2DblOdds(1,34);
+		OddsInfo oddsInfo = genf1xf2DblOdds(countraw++,34,34);
 		
 		MqttProperties props = new MqttProperties();
 		props.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
@@ -88,7 +92,7 @@ public class BroadcastDoubleOdds {
 	public void broadcastDoubleOddsZip() {
 		
 		//OddsInfo oddsInfo = readOddsInfoFromFile();
-		OddsInfo oddsInfo = genf1xf2DblOdds(1,34);
+		OddsInfo oddsInfo = genf1xf2DblOdds(countzip++,34,34);
 		
 		MqttProperties props = new MqttProperties();
 		props.setContentType("application/gzip");
@@ -127,7 +131,7 @@ public class BroadcastDoubleOdds {
 		return oddsInfo;
 	}
 	
-	private OddsInfo genf1xf2DblOdds(int f1,int f2) {
+	private OddsInfo genf1xf2DblOdds(long count2,int f1,int f2) {
 		
 		//Random rand = new Random();
 		//IntStream intStream = rand.ints(1,999);
@@ -165,6 +169,8 @@ public class BroadcastDoubleOdds {
 		fullOdds.setUpdAt(new Date());
 		
 		oddsInfo.setFullodds(fullOdds);
+		oddsInfo.setCount(count2);
+		oddsInfo.setSentTime(LocalDateTime.now());
 		
 		return oddsInfo;
 	}
