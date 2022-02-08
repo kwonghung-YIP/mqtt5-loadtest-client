@@ -1,16 +1,16 @@
 # Generate Odds Push data for testing
 
 ## Pull from docker hub and push to jFrog
-'''bash
+```bash
 docker pull kwonghung/mqtt-loadtest-client:latest
 docker tag kwonghung/mqtt-loadtest-client:latest deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/odds-simulator:v0.2
 docker push deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/odds-simulator:v0.2
-'''
+```
 
 ## Run as docker image
 
 ### Generate WIN/PLA Odds
-'''bash
+```bash
 docker run -it \
   -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case5 \
   -v "/etc/timezone:/etc/timezone:ro" \
@@ -25,7 +25,7 @@ docker run -it \
 ```
 
 ### Generate DBL Odds
-'''bash
+```bash
 docker run -it \
   -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case4 \
   -v "/etc/timezone:/etc/timezone:ro" \
@@ -34,10 +34,10 @@ docker run -it \
   --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password=00000000 \
   --dbl-odds.fixed-rate=1000 \
   --dbl-odds.topic-zip=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/dbl/odds/full
-'''  
+```  
 
 ### Generate QIN Odds
-'''bash
+```bash
 docker run -it \
   -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case6 \
   -v "/etc/timezone:/etc/timezone:ro" \
@@ -46,10 +46,10 @@ docker run -it \
   --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password=00000000 \
   --qin-odds.fixed-rate=2000 --qin-odds.f1=12 --qin-odds.f2=12 \
   --qin-odds.topic-zip=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/qin/odds/full
-'''
+```
 
 ### Generate QPL Odds
-'''bash
+```bash
 docker run -it \
   -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case6 \
   -v "/etc/timezone:/etc/timezone:ro" \
@@ -58,4 +58,4 @@ docker run -it \
   --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password=00000000 \
   --qin-odds.fixed-rate=2000 --qin-odds.f1=12 --qin-odds.f2=12 \
   --qin-odds.topic-zip=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/qpl/odds/full
-'''
+```
