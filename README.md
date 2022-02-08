@@ -59,3 +59,34 @@ docker run -it \
   --qin-odds.fixed-rate=2000 --qin-odds.f1=12 --qin-odds.f2=12 \
   --qin-odds.topic-zip=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/qpl/odds/full
 ```
+
+### Other test cases
+```bash
+docker run -it \
+  -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case1 \
+  -v "/etc/timezone:/etc/timezone:ro" \
+  -v "/etc/localtime:/etc/localtime:ro" \
+  deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/mqtt-loadtest-client:latest \
+  --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password==00000000 \
+  --odds.win.fixed-rate=1200 --odds.pla.fixed-rate=1000 --odds.update-whuch-horse:3
+```
+
+```bash
+docker run -it \
+  -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case2 \
+  -v "/etc/timezone:/etc/timezone:ro" \
+  -v "/etc/localtime:/etc/localtime:ro" \
+  deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/mqtt-loadtest-client:latest \
+  --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password==00000000  \
+  --odds-all.win.fixed-rate=4000 --odds-all.pla.init-delay=2000 --odds-all.pla.fixed-rate=4000
+```
+
+```bash
+docker run -it \
+  -e TZ=Asia/Hong_Kong -e SPRING_PROFILES_ACTIVE=case3 \
+  -v "/etc/timezone:/etc/timezone:ro" \
+  -v "/etc/localtime:/etc/localtime:ro" \
+  deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/mqtt-loadtest-client:latest \
+  --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password==00000000 \
+  --odds-all.win.fixed-rate=8000 --odds-all.pla.init-delay=4000 --odds-all.pla.fixed-rate=8000
+```  
