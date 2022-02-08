@@ -170,3 +170,16 @@ mqtt:
   broker-url: wss://mrnzmkh0ufgnb.messaging.solace.cloud:8443
   username: solace-cloud-client
   password: e6r6a8ufj56v9dimfp6tgdectt
+  
+---
+spring:
+  config:
+    activate:
+      on-profile:
+      - ext-solace
+    
+mqtt:
+#  client-id: springboot_paho_${random.value}
+  broker-url: ws://118.143.15.74:51884/mqtt
+  username: tempuser
+  password: "00000000"

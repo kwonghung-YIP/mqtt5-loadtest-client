@@ -36,8 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@Profile("case4")
-public class BroadcastDoubleOdds {
+@Profile("case6")
+public class BroadcastQinOdds {
 
 	@Autowired
 	private MqttAsyncClient client;
@@ -45,29 +45,26 @@ public class BroadcastDoubleOdds {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-	@Value("${dbl-odds.f1:34}")
+	@Value("${qin-odds.f1:12}")
 	private int f1;
 	
-	@Value("${dbl-odds.f2:34}")
+	@Value("${qin-odds.f2:12}")
 	private int f2;
 	
-	@Value("${dbl-odds.topic-raw:public/push/odds/dbl-raw}") 
-	private String dblOddsRawTopic;
+	@Value("${qin-odds.topic-raw:public/push/odds/qin-raw}") 
+	private String qinOddsRawTopic;
 
-	@Value("${dbl-odds.topic-zip:public/push/odds/dbl-zip}") 
-	private String dblOddsZipTopic;
-	
-	@Value("file:/c:/projects/mqtt-client/dbl-odds-14x14.json")
-	private Resource jsonFile;
+	@Value("${qin-odds.topic-zip:public/push/odds/qin-zip}") 
+	private String qinOddsZipTopic;
 	
 	private long countraw = 1;
 	private long countzip = 1;
 	
-	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:1000}")
-	public void broadcastDoubleOddsRaw() {
+	@Scheduled(fixedRateString = "${qin-odds.fixed-rate:1000}")
+	public void broadcastQinOddsRaw() {
 		
 		//OddsInfo oddsInfo = readOddsInfoFromFile();
-		FullOdds fullOdds = genf1xf2DblOdds(countraw++,f1,f2);
+		FullOdds fullOdds = genf1xf2QinOdds(countraw++,f1,f2);
 		
 		MqttProperties props = new MqttProperties();
 		props.setContentType(MimeTypeUtils.APPLICATION_JSON_VALUE);
@@ -84,7 +81,7 @@ public class BroadcastDoubleOdds {
 			log.error("", e);
 		}
 		
-		final String topic = dblOddsRawTopic;
+		final String topic = qinOddsRawTopic;
 		
 		try {
 			IMqttToken token = client.publish(topic, msg);
@@ -94,11 +91,11 @@ public class BroadcastDoubleOdds {
 		}	
 	}
 
-	@Scheduled(fixedRateString = "${dbl-odds.fixed-rate:1000}")
-	public void broadcastDoubleOddsZip() {
+	@Scheduled(fixedRateString = "${qin-odds.fixed-rate:1000}")
+	public void broadcastQinOddsZip() {
 		
 		//OddsInfo oddsInfo = readOddsInfoFromFile();
-		FullOdds fullOdds = genf1xf2DblOdds(countzip++,f1,f2);
+		FullOdds fullOdds = genf1xf2QinOdds(countzip++,f1,f2);
 		
 		MqttProperties props = new MqttProperties();
 		props.setContentType("application/gzip");
@@ -117,7 +114,7 @@ public class BroadcastDoubleOdds {
 			log.error("", e);
 		}
 		
-		final String topic = dblOddsZipTopic;
+		final String topic = qinOddsZipTopic;
 		
 		try {
 			IMqttToken token = client.publish(topic, msg);
@@ -127,7 +124,7 @@ public class BroadcastDoubleOdds {
 		}	
 	}
 	
-	private OddsInfo readOddsInfoFromFile() {
+	/*private OddsInfo readOddsInfoFromFile() {
 		OddsInfo oddsInfo = null;
 		try (InputStream in=jsonFile.getInputStream()) {
 			oddsInfo = objectMapper.readValue(in, OddsInfo.class);
@@ -135,9 +132,9 @@ public class BroadcastDoubleOdds {
 			log.error("", e);
 		}
 		return oddsInfo;
-	}
+	}*/
 	
-	private FullOdds genf1xf2DblOdds(long count2,int f1,int f2) {
+	private FullOdds genf1xf2QinOdds(long count2,int f1,int f2) {
 		
 		//Random rand = new Random();
 		//IntStream intStream = rand.ints(1,999);
@@ -154,7 +151,7 @@ public class BroadcastDoubleOdds {
 			for (int j=0;j<f2;j++) {
 				long randOdds = Math.round(Math.random()*999);
 				odds[n] = new CombinationOdds();
-				odds[n].setCmbStr(String.format("%02d/%02d", i+1, j+1));
+				odds[n].setCmbStr(String.format("%02d,%02d", i+1, j+1));
 				odds[n].setScrOrd(n+1);
 				odds[n].setCmbSt("Defined");
 				//odds[n].setWP(99999.9);

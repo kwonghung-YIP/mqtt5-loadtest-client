@@ -13,6 +13,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttSubscription;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -60,8 +61,7 @@ public class MqttClientConfig {
 			
 			@Override
 			public void messageArrived(String topic, MqttMessage message) throws Exception {
-				// TODO Auto-generated method stub
-				
+				log.info("message recevied from topic {}", topic);
 			}
 			
 			@Override
@@ -92,6 +92,10 @@ public class MqttClientConfig {
 		});
 		
 		IMqttToken token = client.connect(options);
+		token.waitForCompletion();
+		
+		MqttSubscription subscription = new MqttSubscription("#");
+		token = client.subscribe(subscription);
 		token.waitForCompletion();
 		
 		return client;
