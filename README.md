@@ -7,7 +7,7 @@ docker tag kwonghung/mqtt-loadtest-client:latest deopcard.corp.hkjc.com/csp-svcm
 docker push deopcard.corp.hkjc.com/csp-svcmesh-docker-snapshot-local/mqtt/kwonghung/odds-simulator:v0.2
 ```
 
-## Run as docker image
+## Run the simulator as a docker image
 
 ### Generate WIN/PLA Odds
 ```bash
@@ -90,12 +90,24 @@ docker run -it \
   --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password==00000000 \
   --odds-all.win.fixed-rate=8000 --odds-all.pla.init-delay=4000 --odds-all.pla.fixed-rate=8000
 ```  
+## Run the simulator as a big fat jar in window cmd (for SIT which cannot download the docker image)
 
 ```cmd
 cls
 
-SET SYSPROPS="-Dmqtt.broker-url=tcp://10.194.117.223:1883 -Dmqtt.username=tempuser -Dmqtt.password=00000000"
-SET PROFILE="-Dspring.profiles.active=case6"
+SET SYSPROPS=-Dmqtt.broker-url=ws://118.143.15.74:51884/mqtt
+SET SYSPROPS=%SYSPROPS% -Dmqtt.username=tempuser
+SET SYSPROPS=%SYSPROPS% -Dmqtt.password=00000000
+
+SET SYSPROPS=%SYSPROPS% -Dwin-odds.compress=true
+SET SYSPROPS=%SYSPROPS% -Dwin-odds.fixed-rate=2000
+SET SYSPROPS=%SYSPROPS% -Dwin-odds.topic=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/win/odds/full
+SET SYSPROPS=%SYSPROPS% -Dpla-odds.compress=true
+SET SYSPROPS=%SYSPROPS% -Dpla-odds.fixed-rate=2000
+SET SYSPROPS=%SYSPROPS% -Dpla-odds.topic=hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/pla/odds/full
+SET SYSPROPS=%SYSPROPS% -Dodds.noOfHorse=14
+
+SET PROFILE=-Dspring.profiles.active=case5
 
 java %PROFILE% %SYSPROPS% -jar mqtt5-loadtest-client-0.0.1-SNAPSHOT.jar 
 ```
