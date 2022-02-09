@@ -90,3 +90,12 @@ docker run -it \
   --mqtt.broker-url=tcp://10.194.117.223:1883 --mqtt.username=tempuser --mqtt.password==00000000 \
   --odds-all.win.fixed-rate=8000 --odds-all.pla.init-delay=4000 --odds-all.pla.fixed-rate=8000
 ```  
+
+```cmd
+cls
+
+SET SYSPROPS="-Dmqtt.broker-url=tcp://10.194.117.223:1883 -Dmqtt.username=tempuser -Dmqtt.password=00000000"
+SET PROFILE="-Dspring.profiles.active=case6"
+
+java %PROFILE% %SYSPROPS% -jar mqtt5-loadtest-client-0.0.1-SNAPSHOT.jar 
+```
