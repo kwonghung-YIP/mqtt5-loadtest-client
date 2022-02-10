@@ -54,7 +54,7 @@ public class BroadcastQinOdds {
 	@Value("${qin-odds.topic-raw:public/push/odds/qin-raw}") 
 	private String qinOddsRawTopic;
 
-	@Value("${qin-odds.topic-zip:public/push/odds/qin-zip}") 
+	@Value("${qin-odds.topic-zip:hk/d/prdt/wager/evt/01/upd/racing/20201006/s1/01/qin/odds/full}") 
 	private String qinOddsZipTopic;
 	
 	private long countraw = 1;
@@ -134,7 +134,7 @@ public class BroadcastQinOdds {
 		return oddsInfo;
 	}*/
 	
-	private FullOdds genf1xf2QinOdds(long count2,int f1,int f2) {
+	private FullOdds genf1xf2QinOdds(long count,int f1,int f2) {
 		
 		//Random rand = new Random();
 		//IntStream intStream = rand.ints(1,999);
@@ -154,6 +154,9 @@ public class BroadcastQinOdds {
 				odds[n].setCmbStr(String.format("%02d,%02d", i+1, j+1));
 				odds[n].setScrOrd(n+1);
 				odds[n].setCmbSt("Defined");
+				if (count%2==0 && (i==5 || j==3)) {
+					odds[n].setCmbSt("Scratched");
+				}
 				//odds[n].setWP(99999.9);
 				odds[n].setOdds(String.valueOf(randOdds));
 				if (noOfHf <= 0) {
